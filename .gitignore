@@ -1,0 +1,12 @@
+# Editor / IDE caches
+.puku/
+
+# Node / build outputs (not used today, but future-proofing)
+node_modules/
+dist/
+build/
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db

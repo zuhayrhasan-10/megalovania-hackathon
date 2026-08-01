@@ -272,6 +272,75 @@ button {
   font-weight: 700;
 }
 
+/* Dropzone (Exhibit C) */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1.1rem 0.8rem;
+  text-align: center;
+  background: var(--navy-800);
+  border: 1.5px dashed rgba(185, 143, 82, 0.45);
+  border-radius: var(--radius);
+  color: var(--ivory-dim);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.dropzone:hover,
+.dropzone:focus-visible {
+  border-color: var(--brass-bright);
+  background: var(--navy-700);
+  color: var(--ivory);
+  outline: none;
+}
+
+.dropzone.is-dragover {
+  border-color: var(--brass-bright);
+  border-style: solid;
+  background: rgba(185, 143, 82, 0.12);
+  color: var(--ivory);
+}
+
+.dropzone-icon {
+  font-family: var(--serif-display);
+  font-size: 1.4rem;
+  color: var(--brass-bright);
+  line-height: 1;
+}
+
+.dropzone-title {
+  font-family: var(--serif-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ivory);
+}
+
+.dropzone-sub {
+  font-size: 0.78rem;
+  color: var(--ivory-faint);
+}
+
+.dropzone-link {
+  color: var(--brass-bright);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.upload-status {
+  margin-top: 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--ivory-faint);
+  min-height: 1em;
+}
+
+.upload-status .upload-ok { color: var(--risk-low); }
+.upload-status .upload-err { color: var(--risk-high); }
+
 /* Run button */
 .run-btn {
   width: 100%;
@@ -321,6 +390,36 @@ button {
   gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
+
+/* Tabs */
+.tab-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-right: auto;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ivory-faint);
+  font-family: var(--serif-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.25rem 0.1rem;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-btn:hover { color: var(--ivory-dim); }
+
+.tab-btn.active {
+  color: var(--ivory);
+  border-bottom-color: var(--brass-bright);
+}
+
+.tab-panel[hidden] { display: none; }
 
 .results-header h2 {
   font-family: var(--serif-display);
@@ -580,3 +679,89 @@ blockquote.evidence-text {
   color: var(--brass-bright);
   min-height: 1em;
 }
+
+/* ---------------- Document pane ---------------- */
+
+.doc-legend {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.doc-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ivory-dim);
+}
+
+.legend-chip {
+  display: inline-block;
+  padding: 0.18rem 0.55rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.legend-count {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ivory-faint);
+}
+
+.doc-legend-empty {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--ivory-faint);
+  font-style: italic;
+}
+
+.doc-text {
+  background: var(--navy-900);
+  border: 1px solid var(--navy-600);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  font-family: var(--serif-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--ivory-dim);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Per-category highlight colors — distinct hues so multiple clause types
+   can sit next to each other and stay readable. */
+.hl {
+  background: transparent;
+  color: var(--ivory);
+  padding: 0.05rem 0.15rem;
+  border-radius: 2px;
+  box-shadow: inset 0 -2px 0 currentColor;
+  font-style: normal;
+}
+
+.hl-payment               { color: #d6ab6c; }
+.hl-data-protection       { color: #8fb8d6; }
+.hl-termination           { color: #d68f8f; }
+.hl-confidentiality       { color: #b59ad6; }
+.hl-auto-renewal          { color: #d6c08f; }
+.hl-limitation-liability  { color: #8fd6b5; }
+.hl-ip                    { color: #d68fc1; }
+
+.legend-payment               { color: #d6ab6c; }
+.legend-data-protection       { color: #8fb8d6; }
+.legend-termination           { color: #d68f8f; }
+.legend-confidentiality       { color: #b59ad6; }
+.legend-auto-renewal          { color: #d6c08f; }
+.legend-limitation-liability  { color: #8fd6b5; }
+.legend-ip                    { color: #d68fc1; }
