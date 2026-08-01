@@ -765,3 +765,229 @@ blockquote.evidence-text {
 .legend-auto-renewal          { color: #d6c08f; }
 .legend-limitation-liability  { color: #8fd6b5; }
 .legend-ip                    { color: #d68fc1; }
+
+/* ===================================================================
+   Human in the Process — Final Review summary table
+   A single consolidated table that mirrors the per-finding dispositions
+   the user has saved. The dark-navy header + light-cell layout mirrors
+   the example image in the spec.
+   =================================================================== */
+
+.human-review {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(203, 195, 168, 0.18);
+}
+
+.human-review-header {
+  margin-bottom: 0.9rem;
+}
+
+.human-review-eyebrow {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+  margin-bottom: 0.25rem;
+}
+
+.human-review-title {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+  color: var(--ivory);
+  margin: 0 0 0.4rem;
+}
+
+.human-review-sub {
+  margin: 0;
+  font-family: var(--serif-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ivory-dim);
+  max-width: 60ch;
+}
+
+.human-review-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--navy-600);
+  border-radius: var(--radius);
+  background: var(--navy-900);
+}
+
+.human-review-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--serif-body);
+  font-size: 0.85rem;
+  color: var(--navy-950);
+}
+
+.human-review-table thead th {
+  background: var(--navy-950);
+  color: var(--ivory);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--brass);
+  white-space: nowrap;
+}
+
+.human-review-table tbody th,
+.human-review-table tbody td {
+  padding: 0.7rem 0.75rem;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(11, 31, 58, 0.12);
+  background: #eef0f3;
+  color: var(--navy-950);
+}
+
+.human-review-table tbody tr:nth-child(even) th,
+.human-review-table tbody tr:nth-child(even) td {
+  background: #f6f7f9;
+}
+
+.human-review-table tbody tr:last-child th,
+.human-review-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.human-review-table tbody tr.decided th,
+.human-review-table tbody tr.decided td {
+  background: #ffffff;
+  border-left: 2px solid var(--brass);
+}
+
+.human-review-table tbody tr.decided .hr-clause,
+.human-review-table tbody tr.decided .hr-decision {
+  font-weight: 600;
+}
+
+.human-review-table .hr-clause {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  color: var(--navy-950);
+  min-width: 9rem;
+}
+
+.human-review-table .hr-contract blockquote {
+  margin: 0;
+  font-style: italic;
+  border-left: 2px solid var(--brass);
+  padding-left: 0.6rem;
+  color: var(--navy-800);
+  line-height: 1.4;
+}
+
+.human-review-table .hr-reason,
+.human-review-table .hr-standard {
+  line-height: 1.45;
+}
+
+.human-review-table .hr-decision {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.human-review-table .hr-decision.hr-decision-set {
+  color: var(--risk-low);
+  font-weight: 600;
+}
+
+.human-review-table .hr-feedback {
+  font-style: italic;
+  color: var(--navy-800);
+  white-space: pre-wrap;
+}
+
+.human-review-table .hr-empty {
+  color: var(--navy-600);
+  font-style: italic;
+}
+
+/* Risk badges inside the summary table — echo the per-card styling */
+.hr-risk-badge {
+  display: inline-block;
+  padding: 0.18rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.hr-risk-low      { color: var(--risk-low); }
+.hr-risk-medium   { color: var(--risk-medium); }
+.hr-risk-high     { color: var(--risk-high); }
+.hr-risk-unknown  { color: var(--risk-unknown); }
+
+/* "Human Review" column — Required / Recommended / Optional */
+.hr-required-pill {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hr-required-high    { background: rgba(164, 66, 58, 0.18);  color: var(--risk-high);   border: 1px solid var(--risk-high); }
+.hr-required-medium  { background: rgba(217, 178, 120, 0.18); color: var(--brass-bright); border: 1px solid var(--brass-bright); }
+.hr-required-low     { background: rgba(79, 122, 92, 0.16); color: var(--risk-low);    border: 1px solid var(--risk-low); }
+.hr-required-unknown { background: rgba(120, 120, 120, 0.18); color: var(--risk-unknown); border: 1px solid var(--risk-unknown); }
+
+/* Footer of the summary block: tally + progress */
+.human-review-footer {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ivory-faint);
+}
+
+.human-review-count { color: var(--ivory-dim); letter-spacing: 0.03em; }
+.human-review-progress { color: var(--brass-bright); letter-spacing: 0.03em; }
+
+/* Empty-state copy when no decisions have been made yet */
+.human-review.human-review-empty {
+  margin-top: 1.5rem;
+}
+
+.human-review.human-review-empty .human-review-header {
+  opacity: 0.7;
+}
+
+@media (max-width: 880px) {
+  .human-review-table thead { display: none; }
+  .human-review-table tbody tr {
+    display: block;
+    border-bottom: 1px solid rgba(11, 31, 58, 0.12);
+    padding: 0.4rem 0;
+  }
+  .human-review-table tbody th,
+  .human-review-table tbody td {
+    display: block;
+    padding: 0.35rem 0.6rem;
+    background: transparent !important;
+  }
+  .human-review-table tbody th::before { content: "Clause Type — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-risk::before { content: "Risk — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-contract::before { content: "Contract — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-standard::before { content: "Standard — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-reason::before { content: "Reason — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-required::before { content: "Human Review — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-decision::before { content: "Decision — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+  .human-review-table tbody td.hr-feedback::before { content: "Feedback — "; font-family: var(--mono); font-size: 0.7rem; color: var(--navy-600); }
+}

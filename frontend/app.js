@@ -136,6 +136,14 @@ const state = {
   // populated when a contract is selected, used to highlight the document
   // and to seed the "Run Review" results.
   detectedClauses: {},
+  // Per-review results (mirrors the Findings grid). Refreshed each time
+  // the user clicks "Run Review". The "Human in the Process" summary at
+  // the bottom of the pane is rendered from this list.
+  lastResults: [],
+  // dispositions[result_id] -> { decision, feedback } — the human's
+  // verdict on each finding. Survives across renders so toggling a
+  // button or running a new review preserves the user's last call.
+  dispositions: {},
 };
 
 // ------------------------------------------------------------
@@ -428,6 +436,15 @@ function showError(message) {
 }
 
 function renderResults(results) {
+  // Reset per-review state. Drop any dispositions for result_ids that
+  // aren't in the new review so a stale Approve on a clause that no
+  // longer exists can't leak into the new summary table.
+  state.lastResults = results || [];
+  const currentIds = new Set(state.lastResults.map(r => r.result_id));
+  Object.keys(state.dispositions).forEach((id) => {
+    if (!currentIds.has(id)) delete state.dispositions[id];
+  });
+
   if (!results || results.length === 0) {
     resultsCount.textContent = '';
     resultsArea.innerHTML = `
@@ -447,6 +464,7 @@ function renderResults(results) {
 
   resultsArea.innerHTML = '';
   resultsArea.appendChild(grid);
+  resultsArea.appendChild(buildHumanReviewSummary(state.lastResults));
 }
 
 function buildResultCard(result) {
@@ -469,10 +487,31 @@ function buildResultCard(result) {
   card.querySelector('.standard-text').textContent = result.company_standard ?? '';
   card.querySelector('.evidence-source').textContent = result.source ?? '';
 
-  // Disposition buttons
+  // Disposition buttons + feedback textarea
   const statusEl = card.querySelector('.disposition-status');
   const feedbackEl = card.querySelector('.feedback-input');
   const buttons = card.querySelectorAll('.disp-btn');
+
+  // Restore any prior decision/feedback so the summary stays in sync
+  // even if the user re-runs the review or re-renders this card.
+  const prior = state.dispositions[result.result_id];
+  if (prior) {
+    feedbackEl.value = prior.feedback || '';
+    buttons.forEach((b) => {
+      if (b.dataset.decision === prior.decision) b.classList.add('active');
+    });
+  }
+
+  // Persist feedback edits live so the summary stays current as the user
+  // types — they don't have to click a decision button to commit.
+  feedbackEl.addEventListener('input', () => {
+    const existing = state.dispositions[result.result_id] || { decision: null };
+    state.dispositions[result.result_id] = {
+      ...existing,
+      feedback: feedbackEl.value,
+    };
+    refreshHumanReviewSummary();
+  });
 
   buttons.forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -485,7 +524,12 @@ function buildResultCard(result) {
           feedback: feedbackEl.value || undefined,
         });
         btn.classList.add('active');
+        state.dispositions[result.result_id] = {
+          decision: btn.dataset.decision,
+          feedback: feedbackEl.value || '',
+        };
         statusEl.textContent = `Saved — marked "${btn.dataset.decision}".`;
+        refreshHumanReviewSummary();
       } catch (err) {
         statusEl.textContent = `Couldn't save (${err.message}).`;
         buttons.forEach((b) => { b.disabled = false; });
@@ -504,6 +548,148 @@ function riskLevelToKey(riskLevel) {
     case 'Not Enough Information': return 'unknown';
     default: return 'unknown';
   }
+}
+
+// ------------------------------------------------------------
+// "Human in the Process" summary
+//
+// At the bottom of the Findings pane we render a single consolidated
+// table that mirrors the example in the spec: one row per clause type,
+// columns for Risk Level, Contract Clause, Company Standard, Reason,
+// Human Review (whether the AI flags a human review as Required /
+// Recommended / Optional), and the human's Decision + Feedback.
+//
+// The table only appears once at least one disposition has been saved.
+// Live-edits to the per-card feedback textarea refresh just the summary
+// in place so the user can type without losing focus.
+// ------------------------------------------------------------
+function humanReviewRequiredFor(riskKey) {
+  switch (riskKey) {
+    case 'high': return 'Required';
+    case 'medium': return 'Recommended';
+    case 'low': return 'Optional';
+    case 'unknown':
+    default: return 'Required';
+  }
+}
+
+function buildHumanReviewSummary(results) {
+  const wrap = document.createElement('section');
+  wrap.className = 'human-review';
+  wrap.id = 'humanReviewSummary';
+  wrap.setAttribute('aria-label', 'Human in the process — final review');
+
+  wrap.innerHTML = `
+    <header class="human-review-header">
+      <span class="human-review-eyebrow">Human in the Process</span>
+      <h2 class="human-review-title">Final Review</h2>
+      <p class="human-review-sub">One row per clause type. The "Human Review" column is the AI's recommendation; the "Decision" and "Feedback" columns are your call. Save decisions on each finding above — they appear here in real time.</p>
+    </header>
+
+    <div class="human-review-table-wrap">
+      <table class="human-review-table">
+        <thead>
+          <tr>
+            <th scope="col">Clause Type</th>
+            <th scope="col">Risk Level</th>
+            <th scope="col">Contract Clause</th>
+            <th scope="col">Company Standard</th>
+            <th scope="col">Reason</th>
+            <th scope="col">Human Review</th>
+            <th scope="col">Decision</th>
+            <th scope="col">Feedback</th>
+          </tr>
+        </thead>
+        <tbody class="human-review-rows"></tbody>
+      </table>
+    </div>
+
+    <footer class="human-review-footer">
+      <span class="human-review-count" data-role="decided"></span>
+      <span class="human-review-progress" data-role="progress"></span>
+    </footer>
+  `;
+
+  // Populate the body now and refresh in place on every update.
+  refreshHumanReviewSummary(wrap, results);
+
+  // Hide the entire block until at least one decision has been made —
+  // the footer text below reminds the user how to populate it.
+  const decided = results.filter(r => state.dispositions[r.result_id]?.decision).length;
+  if (decided === 0) {
+    wrap.classList.add('human-review-empty');
+    wrap.querySelector('.human-review-table-wrap').hidden = true;
+    wrap.querySelector('.human-review-footer').hidden = true;
+    const sub = wrap.querySelector('.human-review-sub');
+    sub.textContent = 'No human decisions yet. Use the Approve / Reject / Mark for review buttons on each card above (and the Add Feedback field) to populate this table.';
+  }
+
+  return wrap;
+}
+
+function refreshHumanReviewSummary(existingWrap, resultsArg) {
+  const results = resultsArg || state.lastResults;
+  const wrap = existingWrap || document.getElementById('humanReviewSummary');
+  if (!wrap || !results || results.length === 0) return;
+
+  const tbody = wrap.querySelector('.human-review-rows');
+  tbody.innerHTML = '';
+
+  let decided = 0;
+  results.forEach((result) => {
+    const riskKey = riskLevelToKey(result.risk_level);
+    const disposition = state.dispositions[result.result_id] || {};
+    const hasDecision = !!disposition.decision;
+    if (hasDecision) decided++;
+
+    const tr = document.createElement('tr');
+    tr.dataset.risk = riskKey;
+    if (hasDecision) tr.classList.add('decided');
+
+    const clauseClause = result.contract_clause || '—';
+    const standard = result.company_standard || '—';
+    const reason = result.reason || '—';
+    const decision = disposition.decision || '—';
+    const feedback = disposition.feedback || '';
+
+    tr.innerHTML = `
+      <th scope="row" class="hr-clause">${escapeHtml(result.clause_type || '—')}</th>
+      <td class="hr-risk"><span class="hr-risk-badge hr-risk-${riskKey}">${escapeHtml(result.risk_level || '—')}</span></td>
+      <td class="hr-contract"><blockquote>${escapeHtml(truncate(clauseClause, 180))}</blockquote></td>
+      <td class="hr-standard">${escapeHtml(truncate(standard, 140))}</td>
+      <td class="hr-reason">${escapeHtml(truncate(reason, 160))}</td>
+      <td class="hr-required"><span class="hr-required-pill hr-required-${riskKey}">${humanReviewRequiredFor(riskKey)}</span></td>
+      <td class="hr-decision${hasDecision ? ' hr-decision-set' : ''}">${escapeHtml(decision)}</td>
+      <td class="hr-feedback">${escapeHtml(feedback) || '<span class="hr-empty">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Update the footer counters. If this is the first decision landing,
+  // unhide the table and swap the empty-state copy.
+  const decidedEl = wrap.querySelector('[data-role="decided"]');
+  const progressEl = wrap.querySelector('[data-role="progress"]');
+  if (decidedEl) decidedEl.textContent = `${decided} of ${results.length} decided`;
+  if (progressEl) {
+    const pending = results.length - decided;
+    progressEl.textContent = pending === 0
+      ? 'All findings decided — this case is ready to file.'
+      : `${pending} pending decision${pending === 1 ? '' : 's'}.`;
+  }
+
+  if (decided > 0 && wrap.classList.contains('human-review-empty')) {
+    wrap.classList.remove('human-review-empty');
+    wrap.querySelector('.human-review-table-wrap').hidden = false;
+    wrap.querySelector('.human-review-footer').hidden = false;
+    const sub = wrap.querySelector('.human-review-sub');
+    sub.textContent = 'One row per clause type. The "Human Review" column is the AI\'s recommendation; the "Decision" and "Feedback" columns are your call. Decisions on each finding above appear here in real time.';
+  }
+}
+
+function truncate(str, max) {
+  const s = String(str || '').trim();
+  if (s.length <= max) return s;
+  return s.slice(0, max - 1).trimEnd() + '…';
 }
 
 // ------------------------------------------------------------

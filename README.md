@@ -9,8 +9,10 @@ The whole app lives in the `frontend/` folder: `index.html`, `style.css`, and `a
 ---
 
 ## Latest changes
+**Change #9 — Human in the Process (Final Review summary):** After running a review, a consolidated table at the bottom of the Findings pane shows one row per clause type with the AI's risk level, contract clause, company standard, reason, a "Human Review" pill (Required / Recommended / Optional), and the human's decision + feedback. Decisions and feedback typed on the per-finding cards above update this table in real time. Until the first decision is made, the table shows a reminder telling the reviewer to use the per-card Approve / Reject / Mark + Add Feedback controls.
+**Change #8 — Honesty guard for "Not Enough Information":** When the AI cannot find a clause in the contract, the Findings card now shows the exact message *"Not enough information to invent a clause, or legal explanation."* in a dedicated banner at the top of the card. The side-by-side comparison table is left empty (with an honest "no comparison produced" note), and the references section is relabelled to *"What would have been checked"* so users can see the basis *without* the AI pretending it actually used it. The AI will never invent a clause or a legal explanation out of thin air.
 
-**Change #6 — Intro and contribution rules (this entry):** Added a "Latest changes" section to the top of the README so new entries are always visible, plus a `CHANGELOG.md` companion file with the full append-only history. Added a `How to update this README` section so anyone can keep these two files current after every future change.
+**Change #7 — Risk-level system with side-by-side reasoning:** Each Findings card now explains *why* a risk level was assigned, with a side-by-side table of every discrepancy between the uploaded contract and the company standard / prior agreements, plus a numbered list of references and sources behind the rating.
 
 Previous changes are summarized in the [Step-by-step build log](#what-we-built-step-by-step) further down and detailed in full in [`CHANGELOG.md`](./CHANGELOG.md).
 
@@ -86,6 +88,44 @@ When you upload files, the dropzone shows what happened:
 - A green "Loaded 3 contracts · scanning for clauses…" message on success.
 - A red error message (kept on screen until you upload again) if a file couldn't be read.
 - Success messages auto-clear after a few seconds.
+
+### Step 6 — Honesty guard ("Not Enough Information")
+
+The risk system has four levels. Three are real ratings; the fourth is a deliberate no-answer. When the scanner walks the contract and finds *no sentence* matching a clause category, the AI has nothing to compare against the standard. Rather than guess, it now reports *"Not Enough Information"* and the card surfaces this exact message in a dedicated banner at the top:
+
+> *Not enough information to invent a clause, or legal explanation.*
+
+For those cards we also:
+
+- leave the side-by-side comparison table empty (with a note explaining no comparison was produced), instead of inventing discrepancies;
+- relabel the references section to *"What would have been checked"*, so the user can see the legal sources we *would* have used, without us pretending we used them;
+- hide the matched-clause quote, because there isn't one.
+
+The hard rule is: **the AI will not invent a clause out of thin air, and it will not produce a baseless legal explanation out of context.** If the evidence isn't there, the answer is *"Not Enough Information"* — never a fabricated risk level.
+
+### Step 7 — Human in the Process (Final Review summary)
+
+The AI suggests risks, but a human has the final say. Every Findings card still has the four mandatory disposition controls:
+
+- **Approve** — the clause is acceptable as-is.
+- **Reject** — the clause is not acceptable; do not sign.
+- **Mark for review** — needs a second pair of eyes before deciding.
+- **Add feedback** — a free-text margin note attached to that finding.
+
+At the bottom of the Findings pane we now render a single consolidated **Final Review** table that mirrors everything the human has decided so far. One row per clause type, with columns for:
+
+| Column | Source |
+| --- | --- |
+| Clause Type | name of the finding |
+| Risk Level | the AI's badge (Low / Medium / High / Not Enough Information) |
+| Contract Clause | the matched sentence (truncated) |
+| Company Standard | the baseline we compared against |
+| Reason | the AI's plain-English explanation |
+| **Human Review** | the AI's recommendation pill: *Required* (High), *Recommended* (Medium), *Optional* (Low), *Required* (Not Enough Information) |
+| **Decision** | the human's Approve / Reject / Mark call |
+| **Feedback** | the human's margin note |
+
+Until at least one decision is saved, the table is replaced with a short reminder telling the reviewer to use the per-card controls. As soon as a decision is made, the table fades in and updates live — typing feedback in a card updates the corresponding row in the table without losing focus. Decisions persist across re-renders, but a fresh review drops dispositions for clause types that are no longer in scope so old calls can't leak in.
 
 ---
 
