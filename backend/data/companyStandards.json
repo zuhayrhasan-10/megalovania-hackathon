@@ -1,0 +1,23 @@
+{
+  "ct1": {
+    "standard": "Net 30 payment terms are required. Standard invoices must be paid within thirty (30) days of receipt. Late fees are acceptable only if disclosed in advance and capped at 1% per month."
+  },
+  "ct2": {
+    "standard": "Termination for material breach should require written notice and a cure period of at least thirty (30) days. Termination for convenience by the Company should require no more than thirty (30) days notice. Counterparties should not be permitted to terminate the Company for convenience at all."
+  },
+  "ct3": {
+    "standard": "Confidentiality obligations must survive termination for a minimum of three (3) years. The standard requires reciprocal obligations and reasonable care, with carve-outs for legally required disclosures."
+  },
+  "ct4": {
+    "standard": "Liability cap must not be less than the fees paid in the twelve (12) months preceding the claim. Disclaimers of consequential and indirect damages are acceptable."
+  },
+  "ct5": {
+    "standard": "Automatic renewal should require affirmative consent or, at minimum, a notice window of at least thirty (30) days to cancel before the renewal date. Renewal terms should not exceed twelve (12) months."
+  },
+  "ct6": {
+    "standard": "Counterparties must implement industry-standard security safeguards and must notify the Company of any data breach within forty-eight (48) hours of discovery."
+  },
+  "ct7": {
+    "standard": "Work product created specifically for the Company under the agreement should be owned by the Company upon payment. Pre-existing materials may remain with the originating party under license."
+  }
+}

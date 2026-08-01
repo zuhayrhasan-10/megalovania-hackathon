@@ -1,0 +1,37 @@
+[
+  {
+    "id": "ct1",
+    "name": "Payment",
+    "description": "Invoice timing, late fees, and acceptable payment windows."
+  },
+  {
+    "id": "ct2",
+    "name": "Termination",
+    "description": "Conditions and notice periods under which either party can end the agreement."
+  },
+  {
+    "id": "ct3",
+    "name": "Confidentiality",
+    "description": "How each party must protect the other's confidential information."
+  },
+  {
+    "id": "ct4",
+    "name": "Limitation of Liability",
+    "description": "Caps on damages and exclusions of certain types of losses."
+  },
+  {
+    "id": "ct5",
+    "name": "Automatic Renewal",
+    "description": "Whether the agreement auto-renews and what notice is required to prevent it."
+  },
+  {
+    "id": "ct6",
+    "name": "Data Protection",
+    "description": "Security obligations and breach notification timelines."
+  },
+  {
+    "id": "ct7",
+    "name": "Intellectual Property",
+    "description": "Ownership of work product, deliverables, and pre-existing materials."
+  }
+]
