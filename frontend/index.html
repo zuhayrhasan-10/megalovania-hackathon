@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contract Review Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="masthead-title">
+        <span class="eyebrow">Automated Clause Review</span>
+        <h1>Contract Review Assistant</h1>
+      </div>
+      <div class="case-stamp" id="caseStamp">
+        <span class="case-label">Case No.</span>
+        <span class="case-number" id="caseNumber">— — — —</span>
+      </div>
+    </div>
+    <div class="masthead-rule"></div>
+  </header>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <section class="exhibit" id="exhibitContract">
+        <h2><span class="exhibit-tag">Exhibit A</span> Select Contract</h2>
+        <div class="exhibit-body" id="contractList" aria-live="polite">
+          <p class="placeholder">Loading contracts…</p>
+        </div>
+      </section>
+
+      <section class="exhibit" id="exhibitClauses">
+        <h2><span class="exhibit-tag">Exhibit B</span> Clause Types</h2>
+        <div class="exhibit-body" id="clauseList" aria-live="polite">
+          <p class="placeholder">Loading clause types…</p>
+        </div>
+      </section>
+
+      <button class="run-btn" id="runBtn" disabled>
+        <span class="run-btn-seal">☙</span>
+        Run Review
+      </button>
+      <p class="run-hint" id="runHint">Select a contract and at least one clause type.</p>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="results-pane">
+
+      <div class="results-header">
+        <h2>Findings</h2>
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+
+      <div id="resultsArea">
+        <div class="empty-state">
+          <div class="empty-state-mark">§</div>
+          <p>No review has been run yet.</p>
+          <p class="empty-state-sub">Choose a contract and clause types on the left, then run the review to see findings here.</p>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Result card template -->
+  <template id="resultCardTemplate">
+    <article class="result-card" data-risk="">
+      <div class="result-card-top">
+        <h3 class="clause-name"></h3>
+        <div class="risk-badge">
+          <span class="risk-badge-text"></span>
+        </div>
+      </div>
+
+      <p class="reason"></p>
+
+      <div class="evidence-block">
+        <div class="evidence-row clause-row">
+          <span class="evidence-label">Contract Clause</span>
+          <blockquote class="evidence-text clause-text"></blockquote>
+        </div>
+        <div class="evidence-row standard-row">
+          <span class="evidence-label">Company Standard</span>
+          <p class="evidence-text standard-text"></p>
+        </div>
+        <div class="evidence-source"></div>
+      </div>
+
+      <div class="disposition">
+        <div class="disposition-buttons">
+          <button class="disp-btn approve" data-decision="Approve">Approve</button>
+          <button class="disp-btn reject" data-decision="Reject">Reject</button>
+          <button class="disp-btn mark" data-decision="Mark for review">Mark for review</button>
+        </div>
+        <textarea class="feedback-input" placeholder="Add a margin note (optional)…"></textarea>
+        <p class="disposition-status"></p>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
